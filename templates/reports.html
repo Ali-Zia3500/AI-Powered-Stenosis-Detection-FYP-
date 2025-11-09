@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Reports • AI Powered Stenosis Detection{% endblock %}
+{% block content %}
+<h4 class="mb-3">Reports History</h4>
+<div class="row g-3">
+  {% for r in reports or [] %}
+  <div class="col-md-4">
+    <div class="card card-soft h-100">
+      <img class="card-img-top" src="{{ url_for('static', filename='uploads/' + (r.thumbnail or '') ) }}" alt="thumbnail">
+      <div class="card-body">
+        <h6 class="card-title">{{ r.title or 'Patient Report' }}</h6>
+        <div class="text-muted small mb-2">{{ r.date or '' }}</div>
+        {% if r.severity == 'severe' %}
+          <span class="badge text-bg-danger">Severe</span>
+        {% elif r.severity == 'moderate' %}
+          <span class="badge text-bg-warning">Moderate</span>
+        {% else %}
+          <span class="badge text-bg-success">Mild</span>
+        {% endif %}
+      </div>
+      <div class="card-footer bg-white border-0 d-flex gap-2">
+        <a class="btn btn-sm btn-outline-primary" href="/reports/view/{{ r.id }}">View</a>
+        <a class="btn btn-sm btn-outline-success" href="/reports/download/{{ r.id }}">Download</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="alert alert-info">No reports yet.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+

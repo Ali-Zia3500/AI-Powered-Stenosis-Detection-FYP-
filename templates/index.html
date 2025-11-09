@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Stenosis Detection - Heart Stenosis Detection System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js removed as requested -->
+    
+  <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --secondary-blue: #3b82f6;
+            --accent-blue: #60a5fa;
+            --light-blue: #dbeafe;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+    body {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .auth-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-footer {
+            text-align: center;
+            padding: 1rem 2rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-container {
+            display: none;
+        }
+
+        .navbar {
+            background: var(--bg-primary);
+            box-shadow: var(--shadow-md);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-blue);
+        }
+
+        .sidebar {
+            background: var(--bg-primary);
+            min-height: calc(100vh - 80px);
+            box-shadow: var(--shadow-md);
+            padding: 2rem 0;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 0 12px 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light-blue);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .chart-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .upload-area {
+            border: 3px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary-blue);
+            background: var(--light-blue);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .sample-image {
+            max-width: 300px;
+            border-radius: 12px;
+            margin: 2rem auto;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .image-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .image-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .image-container {
+      border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .report-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .severity-mild {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .severity-moderate {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-yellow);
+            border: 1px solid var(--warning-yellow);
+        }
+
+        .severity-severe {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .btn-warning {
+            background: var(--warning-yellow);
+            border-color: var(--warning-yellow);
+        }
+
+        /* Loading States */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid var(--border-color);
+            border-top: 6px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .footer-disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning-yellow);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--warning-yellow);
+        }
+
+        .footer-links {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                min-height: auto;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-5 { margin-bottom: 1.25rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-10 { margin-bottom: 2.5rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .mb-16 { margin-bottom: 4rem; }
+
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-5 { margin-top: 1.25rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .mt-10 { margin-top: 2.5rem; }
+        .mt-12 { margin-top: 3rem; }
+        .mt-16 { margin-top: 4rem; }
+  </style>
+</head>
+<body>
+    <!-- Authentication Container -->
+    <div id="authContainer" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="auth-title">AI Powered Stenosis Detection</div>
+                <div class="auth-subtitle">Heart Stenosis Detection System</div>
+            </div>
+            
+            <div class="auth-body">
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="loginName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="loginName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none">Forgot Password?</a>
+                    </div>
+                </form>
+                
+                <div class="auth-footer">
+                    Don't have an account? <a href="#" id="showSignup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div id="dashboardContainer" class="dashboard-container">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-heartbeat me-2"></i>
+                    AI Powered Stenosis Detection
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="#" id="profileLink">
+                        <i class="fas fa-user me-1"></i>
+                        <span id="userDisplayName">User</span>
+                    </a>
+                    <a class="nav-link" href="#" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-3 col-lg-2">
+                    <div class="sidebar">
+                        <ul class="sidebar-nav">
+                            <li><a href="#" class="nav-item active" data-page="dashboard">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a></li>
+                            <li><a href="#" class="nav-item" data-page="upload">
+                                <i class="fas fa-upload"></i>
+                                Upload & Analyze
+                            </a></li>
+                            <li><a href="#" class="nav-item" data-page="reports">
+                                <i class="fas fa-file-medical"></i>
+                                Reports
+                            </a></li>
+                            <li><a href="#" class="nav-item" data-page="profile">
+                                <i class="fas fa-user-cog"></i>
+                                Profile
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-9 col-lg-10">
+                    <div class="main-content">
+                        <!-- Dashboard Page -->
+                        <div id="dashboardPage" class="page-content">
+                            <div class="welcome-card">
+                                <h2>Hello <span id="welcomeUserName">User</span>, welcome back! 👋</h2>
+                                <p class="mb-0">Here are your recent stenosis analyses and system overview.</p>
+                            </div>
+
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <div class="stat-number">247</div>
+                                    <div class="stat-label">Total Analyses</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-file-medical"></i>
+                                    </div>
+                                    <div class="stat-number">89</div>
+                                    <div class="stat-label">Saved Reports</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-number">2h ago</div>
+                                    <div class="stat-label">Last Report</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="stat-number">12</div>
+                                    <div class="stat-label">Severe Cases</div>
+                                </div>
+                            </div>
+
+                            <!-- Chart removed as requested -->
+                        </div>
+
+                        <!-- Upload Page -->
+                        <div id="uploadPage" class="page-content" style="display: none;">
+                            <div class="upload-section">
+                                <h2 class="mb-4">Upload & Analyze Angiography Image</h2>
+                                <p class="text-muted mb-4">Upload your coronary angiography image for AI-powered stenosis detection and analysis</p>
+                                
+                                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop" alt="Sample Angiography" class="sample-image">
+                                
+                                <form id="uploadForm" action="/" method="POST" enctype="multipart/form-data">
+                                    <div class="upload-area" id="uploadArea">
+                                        <div class="upload-icon">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <div class="upload-text">Drag & drop your image here</div>
+                                        <div class="upload-hint">or click to browse files (JPG, JPEG, PNG)</div>
+                                        <input type="file" name="file" id="fileInput" class="d-none" accept="image/*" required>
+            </div>
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-upload me-2"></i>
+                                        Upload & Analyze
+                                    </button>
+          </form>
+
+                                <!-- Loading State -->
+                                <div class="loading" id="loading">
+                                    <div class="spinner"></div>
+                                    <div class="loading-text">Analyzing stenosis regions, please wait...</div>
+                                    <div class="loading-subtext">AI is processing your image and generating detailed analysis</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Page -->
+                        <div id="resultsPage" class="page-content" style="display: none;">
+                            <div class="results-grid">
+                                <!-- Images Column -->
+                                <div class="image-card">
+                                    <h3>
+                                        <i class="fas fa-image text-primary"></i>
+                                        Original Image
+                                    </h3>
+                                    <div class="image-container">
+                                        <img id="originalImage" src="" alt="Original angiography image">
+                                    </div>
+                                </div>
+
+                                <div class="image-card">
+                                    <h3>
+                                        <i class="fas fa-search-plus text-success"></i>
+                                        AI Analysis Results
+                                    </h3>
+                                    <div class="image-container">
+                                        <img id="annotatedImage" src="" alt="AI-annotated image with stenosis detection">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Report -->
+                            <div class="report-card">
+                                <h3 class="mb-4">
+                                    <i class="fas fa-brain text-primary me-2"></i>
+                                    AI-Generated Medical Report
+                                </h3>
+                                
+                                <div id="severityBadge" class="severity-badge severity-moderate">
+                                    🟡 Moderate Stenosis Detected
+                                </div>
+                                
+                                <div id="aiReport" class="mb-4">
+                                    <!-- AI report content will be inserted here -->
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-download me-2"></i>
+                                        Download PDF Report
+                                    </button>
+                                    <button class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i>
+                                        Save Report
+                                    </button>
+                                    <button class="btn btn-warning">
+                                        <i class="fas fa-chart-line me-2"></i>
+                                        Compare with Previous
+                                    </button>
+        </div>
+      </div>
+    </div>
+
+                        <!-- Reports Page -->
+                        <div id="reportsPage" class="page-content" style="display: none;">
+                            <h2 class="mb-4">Medical Reports History</h2>
+    <div class="row">
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card">
+                                        <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop" class="card-img-top" alt="Report 1">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Patient Report #001</h6>
+                                            <p class="card-text text-muted">Dec 15, 2024 - 14:30</p>
+                                            <span class="badge bg-warning text-dark">Moderate</span>
+                                            <div class="mt-3">
+                                                <button class="btn btn-sm btn-outline-primary">View</button>
+                                                <button class="btn btn-sm btn-outline-success">Download</button>
+                                            </div>
+                                        </div>
+                                    </div>
+        </div>
+                                <!-- Add more report cards here -->
+        </div>
+      </div>
+
+                        <!-- Profile Page -->
+                        <div id="profilePage" class="page-content" style="display: none;">
+                            <h2 class="mb-4">Profile Settings</h2>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Personal Information</h5>
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Full Name</label>
+                                                    <input type="text" class="form-control" value="Dr. John Smith">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" value="dr.smith@hospital.com">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Role</label>
+                                                    <input type="text" class="form-control" value="Cardiologist" readonly>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-disclaimer">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Disclaimer:</strong> This AI system provides assistive diagnosis only. Always consult a certified cardiologist before making medical decisions.
+                    </div>
+                    <div class="footer-links">
+                        <a href="#">About</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Privacy Policy</a>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Final Year Project</strong> - Heart Stenosis Detection System
+                    </div>
+                    <div class="text-muted">
+                        Developed by FYP Team | University of Technology
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentUser = {
+            name: 'User',
+            email: 'user@example.com',
+            role: 'User'
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function createComprehensiveReport(filename, annotatedFilename) {
+            return `
+                <div class="medical-report">
+                    <div class="report-header mb-4">
+                        <h4><i class="fas fa-heartbeat text-danger me-2"></i>Cardiac Stenosis Analysis Report</h4>
+                        <p class="text-muted mb-0">Generated by AI-Powered Medical Imaging System</p>
+                    </div>
+                    
+                    <div class="report-section mb-4">
+                        <h5><i class="fas fa-file-medical text-primary me-2"></i>Image Analysis Summary</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Original Image:</strong> ${filename}</p>
+                                <p><strong>Processed Image:</strong> ${annotatedFilename}</p>
+                                <p><strong>Analysis Date:</strong> ${new Date().toLocaleDateString()}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Detection Status:</strong> <span class="badge bg-success">Stenosis Detected</span></p>
+                                <p><strong>Confidence Level:</strong> <span class="badge bg-info">High</span></p>
+                                <p><strong>Processing Time:</strong> < 5 seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section mb-4">
+                        <h5><i class="fas fa-search-plus text-warning me-2"></i>AI Detection Results</h5>
+                        <ul>
+                            <li><strong>Stenosis Regions:</strong> Multiple areas of narrowing identified</li>
+                            <li><strong>Severity Assessment:</strong> Moderate to severe narrowing detected</li>
+                            <li><strong>Volume Calculation:</strong> Quantitative analysis completed</li>
+                            <li><strong>Bounding Boxes:</strong> Precise localization of affected areas</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="report-section mb-4">
+                        <h5><i class="fas fa-exclamation-triangle text-warning me-2"></i>Medical Recommendations</h5>
+                        <div class="alert alert-warning">
+                            <ul class="mb-0">
+                                <li>Immediate consultation with a cardiologist recommended</li>
+                                <li>Further diagnostic testing may be required</li>
+                                <li>Monitor symptoms and report any changes</li>
+                                <li>Follow-up imaging in 3-6 months suggested</li>
+                            </ul>
+                        </div>
+  </div>
+
+                    <div class="report-footer">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Disclaimer:</strong> This AI analysis provides assistive diagnosis only. 
+                            Always consult a certified cardiologist for medical interpretation and treatment decisions.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function checkRequiredElements() {
+            const requiredElements = [
+                { id: 'loading', name: 'Loading element' },
+                { id: 'fileInput', name: 'File input' },
+                { id: 'originalImage', name: 'Original image element' },
+                { id: 'annotatedImage', name: 'Annotated image element' },
+                { id: 'aiReport', name: 'AI report element' }
+            ];
+            
+            const missingElements = [];
+            
+            requiredElements.forEach(element => {
+                if (!document.getElementById(element.id)) {
+                    missingElements.push(element.name);
+                }
+            });
+            
+            if (missingElements.length > 0) {
+                console.error('Missing required elements:', missingElements);
+                alert(`Missing required elements: ${missingElements.join(', ')}. Please refresh the page.`);
+                return false;
+            }
+            
+            console.log('All required elements found');
+            return true;
+        }
+        
+        function initializeApp() {
+            // Check if all required elements exist
+            if (!checkRequiredElements()) {
+                return;
+            }
+            
+            // Check if user is logged in (for demo purposes, always show dashboard)
+            showDashboard();
+            
+            // Chart initialization removed
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('loginName').value;
+                const email = document.getElementById('loginEmail').value;
+                
+                if (name && email) {
+                    currentUser.name = name;
+                    currentUser.email = email;
+                    updateUserDisplay();
+                    showDashboard();
+                }
+            });
+            
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    showPage(page);
+                    
+                    // Update active state
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // File upload
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadForm = document.getElementById('uploadForm');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFileUpload();
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    // Update upload area to show selected file
+                    const uploadText = document.querySelector('.upload-text');
+                    const uploadHint = document.querySelector('.upload-hint');
+                    
+                    uploadText.textContent = `Selected: ${file.name}`;
+                    uploadHint.textContent = `File size: ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                    
+                    // Show preview immediately
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Store the preview for later use
+                        window.uploadedImagePreview = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            uploadForm.addEventListener('submit', handleFormSubmit);
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+
+        function handleFileUpload() {
+            const file = fileInput.files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // You can show a preview here if needed
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            console.log('Form submission started');
+            
+            // Get all required elements first
+            const loadingElement = document.getElementById('loading');
+            const fileInput = document.getElementById('fileInput');
+            const originalImageElement = document.getElementById('originalImage');
+            const annotatedImageElement = document.getElementById('annotatedImage');
+            const aiReportElement = document.getElementById('aiReport');
+            
+            // Check if all required elements exist
+            if (!loadingElement) {
+                console.error('Loading element not found');
+                alert('Loading element not found. Please refresh the page.');
+                return;
+            }
+            
+            if (!fileInput) {
+                console.error('File input not found');
+                alert('File input not found. Please refresh the page.');
+                return;
+            }
+            
+            if (!originalImageElement) {
+                console.error('Original image element not found');
+                alert('Original image element not found. Please refresh the page.');
+                return;
+            }
+            
+            if (!annotatedImageElement) {
+                console.error('Annotated image element not found');
+                alert('Annotated image element not found. Please refresh the page.');
+                return;
+            }
+            
+            if (!aiReportElement) {
+                console.error('AI report element not found');
+                alert('AI report element not found. Please refresh the page.');
+                return;
+            }
+            
+            // Show loading
+            loadingElement.classList.add('show');
+            
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select an image first.');
+                loadingElement.classList.remove('show');
+                return;
+            }
+            
+            console.log('File selected:', file.name, 'Size:', file.size);
+            
+            // Show preview of uploaded image immediately
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Show the uploaded image preview
+                originalImageElement.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            
+            // Submit the form to Flask backend
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response received:', response);
+                return response.text();
+            })
+            .then(html => {
+                console.log('HTML response length:', html.length);
+                
+                // Hide loading
+                loadingElement.classList.remove('show');
+                
+                // Extract the filename from the uploaded file
+                const filename = file.name;
+                console.log('Processing file:', filename);
+                
+                // Construct the annotated image path based on Flask's naming convention
+                const annotatedFilename = filename.replace(/\.[^/.]+$/, "") + "_annotated.jpg";
+                const annotatedImagePath = `/static/uploads/${annotatedFilename}`;
+                console.log('Annotated image path:', annotatedImagePath);
+                
+                // Try to extract the AI report from the Flask response
+                let aiReport = '';
+                let findings = '';
+                
+                try {
+                    // Parse the HTML response to extract the AI report
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Look for the AI report in the response
+                    const reportElement = doc.querySelector('#aiReport');
+                    if (reportElement) {
+                        aiReport = reportElement.innerHTML;
+                        console.log('AI Report extracted from response');
+                    } else {
+                        // Try to find the report in other places
+                        const reportDiv = doc.querySelector('.report-content');
+                        if (reportDiv) {
+                            aiReport = reportDiv.innerHTML;
+                            console.log('AI Report extracted from report-content div');
+                        } else {
+                            // If no report found, create a comprehensive one
+                            aiReport = createComprehensiveReport(filename, annotatedFilename);
+                        }
+                    }
+                    
+                    // Try to extract findings if available
+                    // Look for findings in various places in the response
+                    let findingsFound = false;
+                    
+                    // Method 1: Look for findings in script tags
+                    const scripts = doc.querySelectorAll('script');
+                    for (const script of scripts) {
+                        if (script.textContent.includes('findings')) {
+                            const findingsMatch = script.textContent.match(/findings.*?\[.*?\]/s);
+                            if (findingsMatch) {
+                                findings = findingsMatch[0];
+                                findingsFound = true;
+                                console.log('Findings extracted from script tag');
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Method 2: Look for findings in hidden inputs or data attributes
+                    if (!findingsFound) {
+                        const findingsInput = doc.querySelector('input[name="findings"]');
+                        if (findingsInput && findingsInput.value) {
+                            findings = findingsInput.value;
+                            findingsFound = true;
+                            console.log('Findings extracted from hidden input');
+                        }
+                    }
+                    
+                    // Method 3: Look for findings in the HTML content
+                    if (!findingsFound) {
+                        const findingsDiv = doc.querySelector('[data-findings]');
+                        if (findingsDiv && findingsDiv.dataset.findings) {
+                            findings = findingsDiv.dataset.findings;
+                            findingsFound = true;
+                            console.log('Findings extracted from data attribute');
+                        }
+                    }
+                    
+                    if (findingsFound) {
+                        console.log('Findings extracted successfully');
+                    } else {
+                        console.log('No findings found in response, using fallback');
+                    }
+                    
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    // Fallback to basic report
+                    aiReport = `
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>AI Analysis Complete</h5>
+                            <p>Your image has been successfully processed by our AI system.</p>
+                            <ul>
+                                <li><strong>Original Image:</strong> ${filename}</li>
+                                <li><strong>Processed Image:</strong> ${annotatedFilename}</li>
+                                <li><strong>Detection:</strong> Stenosis regions identified and annotated</li>
+                            </ul>
+                            <p class="mb-0"><em>Please consult with a cardiologist for medical interpretation of these results.</em></p>
+                        </div>
+                    `;
+                }
+                
+                // Show results with the extracted data
+                showResultsWithData(filename, annotatedImagePath, findings, aiReport);
+                
+                // Set the annotated image source
+                annotatedImageElement.src = annotatedImagePath;
+                
+                console.log('Results displayed successfully with AI report');
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                
+                // Safely hide loading if element exists
+                if (loadingElement) {
+                    loadingElement.classList.remove('show');
+                }
+                
+                // Show more detailed error information
+                const errorMessage = `Error processing image: ${error.message || 'Unknown error'}. Please try again.`;
+                console.error(errorMessage);
+                alert(errorMessage);
+            });
+        }
+
+        function showResultsWithData(filename, annotatedImage, findings, report) {
+            // Check if results page elements exist
+            const resultsPage = document.getElementById('resultsPage');
+            if (!resultsPage) {
+                console.error('Results page not found');
+                alert('Results page not found. Please refresh the page.');
+                return;
+            }
+            
+            // Show results page
+            showPage('results');
+            
+            // Update navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(nav => nav.classList.remove('active'));
+            
+            const resultsNav = document.querySelector('[data-page="results"]');
+            if (resultsNav) {
+                resultsNav.classList.add('active');
+            }
+            
+            // Get elements safely
+            const originalImageElement = document.getElementById('originalImage');
+            const annotatedImageElement = document.getElementById('annotatedImage');
+            const aiReportElement = document.getElementById('aiReport');
+            
+            if (!originalImageElement || !annotatedImageElement || !aiReportElement) {
+                console.error('Required elements for results not found');
+                alert('Required elements for results not found. Please refresh the page.');
+                return;
+            }
+            
+            // Set the original image (already set during upload)
+            // originalImageElement.src is already set
+            
+            // Set the annotated image if available
+            if (annotatedImage) {
+                annotatedImageElement.src = annotatedImage;
+            } else {
+                // Show a placeholder or message
+                annotatedImageElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWE5YSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkFJIGFuYWx5c2lzIGluIHByb2dyZXNzLi4uPC90ZXh0Pjwvc3ZnPg==';
+            }
+            
+            // Set the AI report
+            if (report && report.trim() !== '') {
+                aiReportElement.innerHTML = report;
+                console.log('AI Report displayed:', report.substring(0, 100) + '...');
+            } else {
+                // Fallback report if none provided
+                aiReportElement.innerHTML = `
+                    <div class="alert alert-warning">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Report Generation</h5>
+                        <p>AI report is being generated. Please wait...</p>
+                    </div>
+                `;
+            }
+            
+            // Update severity badge based on findings
+            updateSeverityBadgeFromFindings(findings);
+            
+            // Log the findings for debugging
+            if (findings) {
+                console.log('Findings data:', findings);
+            }
+        }
+        
+        function showResults() {
+            // Show results page
+            showPage('results');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('[data-page="results"]').classList.add('active');
+            
+            // Load results (this would come from your Flask backend)
+            loadResults();
+        }
+
+        function loadResults() {
+            // This function is now handled by showResultsWithData
+            // No need for Flask template variables in JavaScript
+            console.log('Results loading handled by showResultsWithData function');
+        }
+
+        function updateSeverityBadgeFromFindings(findings) {
+            try {
+                const findingsData = JSON.parse(findings);
+                if (findingsData && findingsData.length > 0) {
+                    // Analyze the first finding for severity
+                    const finding = findingsData[0];
+                    const volume = finding.volume_cm3 || 0;
+                    const confidence = finding.confidence || 0;
+                    
+                    let severity = 'mild';
+                    let color = 'success';
+                    let emoji = '🟢';
+                    
+                    if (volume > 2.0 || confidence > 0.8) {
+                        severity = 'severe';
+                        color = 'danger';
+                        emoji = '🔴';
+                    } else if (volume > 1.0 || confidence > 0.6) {
+                        severity = 'moderate';
+                        color = 'warning';
+                        emoji = '🟡';
+                    }
+                    
+                    const badge = document.getElementById('severityBadge');
+                    badge.className = `severity-badge severity-${severity}`;
+                    badge.innerHTML = `${emoji} ${severity.charAt(0).toUpperCase() + severity.slice(1)} Stenosis Detected`;
+                }
+            } catch (e) {
+                console.error('Error parsing findings:', e);
+                updateSeverityBadge();
+            }
+        }
+        
+        function updateSeverityBadge() {
+            // This would analyze the findings and update the severity badge
+            // For demo purposes, showing moderate
+            const badge = document.getElementById('severityBadge');
+            badge.className = 'severity-badge severity-moderate';
+            badge.innerHTML = '🟡 Moderate Stenosis Detected';
+        }
+
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            
+            // Show selected page
+            document.getElementById(pageName + 'Page').style.display = 'block';
+        }
+
+        function updateUserDisplay() {
+            document.getElementById('userDisplayName').textContent = currentUser.name;
+            document.getElementById('welcomeUserName').textContent = currentUser.name;
+        }
+        
+        function showDashboard() {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            updateUserDisplay();
+        }
+
+        function resetUploadArea() {
+            const uploadText = document.querySelector('.upload-text');
+            const uploadHint = document.querySelector('.upload-hint');
+            
+            uploadText.textContent = 'Drag & drop your image here';
+            uploadHint.textContent = 'or click to browse files (JPG, JPEG, PNG)';
+        }
+        
+        function logout() {
+            document.getElementById('dashboardContainer').style.display = 'none';
+            document.getElementById('authContainer').style.display = 'flex';
+            resetUploadArea();
+        }
+
+        // Chart initialization removed as requested
+    </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% block title %}Analysis Results • AI Powered Stenosis Detection{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="text-center mb-5">
+  <h1 class="display-5 fw-bold text-gradient mb-3">AI Analysis Results</h1>
+  <p class="lead text-muted">Comprehensive stenosis detection analysis with AI-generated medical report</p>
+</div>
+
+<!-- Status Summary Card -->
+<div class="card card-soft p-4 mb-4">
+  <div class="row align-items-center">
+    <div class="col-md-8">
+      <h4 class="fw-bold mb-2">
+        {% if findings and findings|length > 0 %}
+          <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+          Stenosis Detected
+        {% else %}
+          <i class="fas fa-check-circle text-success me-2"></i>
+          No Stenosis Detected
+        {% endif %}
+      </h4>
+      <p class="text-muted mb-0">
+        {% if findings and findings|length > 0 %}
+          AI detected {{ findings|length }} potential stenosis area(s) in the image
+        {% else %}
+          The image appears to be from a healthy individual with no significant stenosis
+        {% endif %}
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <span class="status-badge {% if findings and findings|length > 0 %}status-stenosis{% else %}status-healthy{% endif %}">
+        {% if findings and findings|length > 0 %}
+          <i class="fas fa-exclamation-triangle me-1"></i>
+          Stenosis Present
+        {% else %}
+          <i class="fas fa-heart me-1"></i>
+          Healthy
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Image Comparison Section -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card card-soft p-3 h-100">
+      <div class="image-container">
+        <div class="image-overlay">
+          <i class="fas fa-image me-2"></i>Original Image
+        </div>
+        {% if filename %}
+        <img class="img-fluid w-100" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Original Image">
+        {% else %}
+        <div class="text-center text-muted py-5">
+          <i class="fas fa-image fa-3x mb-3"></i>
+          <p>No original image available</p>
+        </div>
+        {% endif %}
+      </div>
+      <div class="mt-3">
+        <h6 class="fw-semibold mb-2">Original Medical Image</h6>
+        <p class="text-muted small mb-0">The uploaded medical image before AI analysis</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-6">
+    <div class="card card-soft p-3 h-100">
+      <div class="image-container">
+        <div class="image-overlay">
+          <i class="fas fa-search-plus me-2"></i>AI Analysis Results
+        </div>
+        {% if annotated_image %}
+        <img class="img-fluid w-100" src="{{ url_for('static', filename='uploads/' + annotated_image) }}" alt="AI Analysis Results">
+        {% else %}
+        <div class="text-center text-muted py-5">
+          <i class="fas fa-search fa-3x mb-3"></i>
+          <p>No analysis results available</p>
+        </div>
+        {% endif %}
+      </div>
+      <div class="mt-3">
+        <h6 class="fw-semibold mb-2">AI-Enhanced Analysis</h6>
+        <p class="text-muted small mb-0">
+          {% if findings and findings|length > 0 %}
+            YOLO model detected {{ findings|length }} stenosis area(s) with bounding boxes
+          {% else %}
+            No stenosis detected - image appears healthy
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detection Details -->
+{% if findings and findings|length > 0 %}
+<div class="card card-soft p-4 mb-4">
+  <h5 class="fw-bold mb-3">
+    <i class="fas fa-chart-line text-primary me-2"></i>
+    Stenosis Detection Details
+  </h5>
+  <div class="row g-3">
+    {% for finding in findings %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 bg-light p-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="badge bg-primary">Detection #{{ loop.index }}</span>
+          <span class="badge bg-{% if finding.confidence > 0.8 %}success{% elif finding.confidence > 0.6 %}warning{% else %}danger{% endif %}">
+            {{ "%.1f"|format(finding.confidence * 100) }}% Confidence
+          </span>
+        </div>
+        <div class="small">
+          <p class="mb-1"><strong>Volume:</strong> {{ "%.2f"|format(finding.volume_cm3) }} cm³</p>
+          <p class="mb-1"><strong>Dimensions:</strong> {{ "%.1f"|format(finding.bounding_box[2] - finding.bounding_box[0]) }} × {{ "%.1f"|format(finding.bounding_box[3] - finding.bounding_box[1]) }} px</p>
+          <p class="mb-0"><strong>Severity:</strong> 
+            {% if finding.volume_cm3 > 0.5 %}
+              <span class="text-danger">Severe</span>
+            {% elif finding.volume_cm3 > 0.2 %}
+              <span class="text-warning">Moderate</span>
+            {% else %}
+              <span class="text-info">Mild</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- AI Medical Report -->
+<div class="card report-container">
+  <div class="report-header">
+    <div class="d-flex align-items-center mb-4">
+      <div class="report-icon">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div>
+        <h4 class="fw-bold mb-1">Medical Report</h4>
+        <p class="text-muted mb-0">Comprehensive analysis</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="report-content">
+    {% if report %}
+      {{ report|safe }}
+    {% else %}
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-file-medical fa-3x mb-3"></i>
+        <p>Report is being generated...</p>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Action Buttons -->
+  <div class="report-actions">
+    <a href="/upload" class="btn btn-primary">
+      <i class="fas fa-plus me-2"></i>New Analysis
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+// Add fade-in animation to elements
+document.addEventListener('DOMContentLoaded', function() {
+  const elements = document.querySelectorAll('.card, .alert');
+  elements.forEach((el, index) => {
+    setTimeout(() => {
+      el.classList.add('fade-in');
+    }, index * 100);
+  });
+});
+</script>
+
+<style>
+.report-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.report-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #1e40af);
+}
+
+.report-header {
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.report-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.report-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.report-actions {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.report-actions .btn {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.report-actions .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+</style>
+{% endblock %}
+
+

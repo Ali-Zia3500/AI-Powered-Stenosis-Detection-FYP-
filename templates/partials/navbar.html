@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg bg-white border-bottom py-3 shadow-sm">
+  <div class="container container-narrow">
+    <a class="navbar-brand brand d-flex align-items-center" href="/dashboard">
+      <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+        <i class="fas fa-heartbeat"></i>
+      </div>
+      <span>AI Powered Stenosis Detection</span>
+    </a>
+    
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsMain" aria-controls="navbarsMain" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarsMain">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+        <li class="nav-item">
+          <a class="nav-link px-3 py-2 rounded-3" href="/dashboard">
+            <i class="fas fa-gauge me-2"></i>Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 py-2 rounded-3" href="/upload">
+            <i class="fas fa-upload me-2"></i>Upload
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link px-3 py-2 rounded-3" href="/profile">
+            <i class="fas fa-user me-2"></i>Profile
+          </a>
+        </li>
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-outline-primary px-3" href="/logout">
+            <i class="fas fa-right-to-bracket me-2"></i>Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+.navbar-nav .nav-link {
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: var(--bg-light);
+  color: var(--primary-color) !important;
+}
+
+.navbar-nav .nav-link.active {
+  background-color: var(--primary-color);
+  color: white !important;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem !important;
+    margin: 0.25rem 0;
+  }
+}
+</style>
+
+

@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Upload & Analyze • AI Powered Stenosis Detection{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold text-gradient mb-3">AI-Powered Heart Stenosis Detection</h1>
+      <p class="lead text-muted">Upload your medical image and get instant AI analysis with detailed medical reports</p>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="card card-soft p-5 mb-4">
+      <div class="text-center mb-4">
+        <div class="display-4 text-primary mb-3">
+          <i class="fas fa-heart-pulse"></i>
+        </div>
+        <h3 class="fw-bold mb-2">Upload Medical Image</h3>
+        <p class="text-muted mb-0">Our AI will analyze your image for potential stenosis detection</p>
+      </div>
+
+      <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-zone mb-4" id="uploadZone">
+          <div class="display-6 text-muted mb-3">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <h5 class="fw-semibold mb-2">Drag & Drop Your Image Here</h5>
+          <p class="text-muted mb-3">or click to browse files</p>
+          <p class="small text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            Supported formats: JPG, JPEG, PNG (Max 10MB)
+          </p>
+          <input class="form-control d-none" type="file" name="file" accept="image/*" required id="fileInput">
+        </div>
+
+        <!-- File Preview -->
+        <div id="filePreview" class="d-none mb-4">
+          <div class="card card-soft p-3">
+            <div class="d-flex align-items-center">
+              <div class="me-3">
+                <i class="fas fa-image text-primary fa-2x"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="mb-1" id="fileName">filename.jpg</h6>
+                <small class="text-muted" id="fileSize">0 KB</small>
+              </div>
+              <button type="button" class="btn btn-outline-danger btn-sm" id="removeFile">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button class="btn btn-primary btn-lg px-5" type="submit" id="submitBtn">
+            <i class="fas fa-brain me-2"></i>
+            <span id="submitText">Analyze with AI</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card card-soft p-4 text-center h-100">
+          <div class="text-primary mb-3">
+            <i class="fas fa-robot fa-2x"></i>
+          </div>
+          <h5 class="fw-semibold mb-2">AI-Powered Analysis</h5>
+          <p class="text-muted small">Advanced YOLO model trained on thousands of medical images for accurate detection</p>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card card-soft p-4 text-center h-100">
+          <div class="text-success mb-3">
+            <i class="fas fa-file-medical fa-2x"></i>
+          </div>
+          <h5 class="fw-semibold mb-2">Medical Reports</h5>
+          <p class="text-muted small">AI-generated comprehensive medical reports with severity assessment and recommendations</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const filePreview = document.getElementById('filePreview');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const removeFile = document.getElementById('removeFile');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const uploadForm = document.getElementById('uploadForm');
+
+    // Click to upload
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    // File selection
+    fileInput.addEventListener('change', handleFileSelect);
+
+    // Drag and drop
+    uploadZone.addEventListener('dragover', handleDragOver);
+    uploadZone.addEventListener('dragleave', handleDragLeave);
+    uploadZone.addEventListener('drop', handleDrop);
+
+    // Remove file
+    removeFile.addEventListener('click', removeSelectedFile);
+
+    // Form submission
+    uploadForm.addEventListener('submit', handleFormSubmit);
+
+    function handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            displayFilePreview(file);
+        }
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                fileInput.files = files;
+                displayFilePreview(file);
+            }
+        }
+    }
+
+    function displayFilePreview(file) {
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        filePreview.classList.remove('d-none');
+        uploadZone.style.display = 'none';
+    }
+
+    function removeSelectedFile() {
+        fileInput.value = '';
+        filePreview.classList.add('d-none');
+        uploadZone.style.display = 'block';
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function handleFormSubmit(e) {
+        if (!fileInput.files[0]) {
+            e.preventDefault();
+            alert('Please select a file first');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitText.innerHTML = '<span class="loading-spinner me-2"></span>Analyzing...';
+        submitBtn.classList.add('disabled');
+    }
+});
+</script>
+{% endblock %}
+
+

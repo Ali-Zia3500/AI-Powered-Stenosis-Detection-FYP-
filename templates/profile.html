@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Profile • AI Powered Stenosis Detection{% endblock %}
+{% block content %}
+<h4 class="mb-3">Profile Settings</h4>
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="card card-soft p-4">
+      <form>
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" value="{{ name or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" value="{{ email or '' }}">
+        </div>
+        <button class="btn btn-primary" type="button">Update Profile</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
